@@ -1,0 +1,9 @@
+config.env
+.env
+.ipynb_checkpoints/
+*.weights.h5
+*.onnx
+*.h5
+*.pt
+*.zip
+__pycache__/
