@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificador de Tazas por IA</title>
+    <!-- Importación de ONNX Runtime Web para ejecutar el modelo .onnx local en el navegador -->
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <link rel="stylesheet" href="CSS/index.css">
+</head>
+<body>
+
+    <!-- Resplandor dinámico de fondo futurista -->
+    <div class="background-glow"></div>
+
+    <div class="app-container">
+        
+        <!-- Cabecera de la Aplicación -->
+        <header class="app-header">
+            <div class="logo-circle">IA</div>
+            <div>
+                <h1>CLASIFICADOR DE TAZAS</h1>
+                <p class="subtitle">Análisis Profesional en Tiempo Real mediante ONNX Runtime</p>
+            </div>
+        </header>
+
+        <!-- 1. PANEL DE CONFIGURACIÓN Y CARGA INICIAL DEL MODELO -->
+        <div id="setup-container" class="card">
+            <h3 class="section-title">Inicialización del Sistema</h3>
+            <p class="description">
+                Carga tu archivo de red neuronal entrenada <strong>modelo_tazas.onnx</strong> para arrancar la detección en vivo.
+            </p>
+            
+            <!-- Botón Estilizado que activa el selector de archivos local -->
+            <button id="btn-load-model" class="primary-btn">
+                CARGAR MODELO IA (.onnx)
+            </button>
+            <input type="file" id="onnx-file-input" accept=".onnx" style="display: none;">
+            
+            <div class="status-container">
+                <div class="status-dot"></div>
+                <span id="status-text">Esperando activación de modelo por el usuario...</span>
+            </div>
+        </div>
+
+        <!-- 2. INTERFAZ DE ANÁLISIS ACTIVA (Se muestra automáticamente al cargar el modelo) -->
+        <div id="main-interface" style="display: none;">
+            
+            <!-- CONTENEDOR GRID DE DOS COLUMNAS (Para detalles a un lado en pantallas grandes) -->
+            <div class="dashboard-grid">
+                
+                <!-- COLUMNA IZQUIERDA: FEED VISUAL Y CONTROLES -->
+                <div class="dashboard-column">
+                    <!-- Tarjeta del Visor de Video / Imagen -->
+                    <div class="camera-card">
+                        <div class="camera-header">
+                            <span>📡 FEED DE VIDEO ACTIVO</span>
+                            <span style="color: #00b4d8; font-size: 0.75rem;">ONNX CORE v2</span>
+                        </div>
+                        
+                        <div class="camera-container">
+                            <video id="webcam" autoplay playsinline muted></video>
+                            <!-- El script inyectará dinámicamente el <img id="preview-img"> aquí -->
+                            
+                            <!-- Recuadro central de enfoque del 70% con borde dinámico (Verde/Rojo) -->
+                            <div id="focus-box"></div>
+                        </div>
+                    </div>
+
+                    <!-- Panel de Controles y Zoom Dinámico -->
+                    <div class="controls-panel">
+                        <div class="slider-container">
+                            <label for="zoom-slider">Ajuste de Escala / Zoom Digital</label>
+                            <input type="range" id="zoom-slider" min="0.5" max="3.0" step="0.05" value="1.0">
+                        </div>
+
+                        <div class="button-row">
+                            <!-- Selector de Imagen Estática -->
+                            <button id="btn-upload-img" class="secondary-btn">
+                                CARGAR IMAGEN
+                            </button>
+                            <input type="file" id="file-input" accept="image/*" style="display: none;">
+                            
+                            <!-- Botón para regresar al Feed en vivo -->
+                            <button id="btn-restart-cam" class="success-btn" style="display: none;">
+                                REINICIAR CÁMARA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: RESULTADOS, METADATOS Y SIMILITUD -->
+                <div class="dashboard-column">
+                    <!-- Panel de Visualización de Métricas de Inferencia -->
+                    <div class="results-panel">
+                        <div class="result-main">
+                            <div class="percent-block">
+                                <p class="percent-label">Porcentaje de Acierto</p>
+                                <p id="percent-text" class="percent-value">0.00%</p>
+                            </div>
+                            <div class="confidence-block">
+                                <p class="small-title">Confianza (IA)</p>
+                                <p id="raw-text" class="raw-value">0.0000</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Hints Dinámicos de Enfoque y Zoom -->
+                        <p id="hint-text" class="hint">Hint: Coloque el objeto en el recuadro central.</p>
+                    </div>
+
+                    <!-- NUEVO PANEL: METADATOS Y CARACTERÍSTICAS FÍSICAS -->
+                    <div class="results-panel">
+                        <h3 class="section-title-small">📋 CARACTERÍSTICAS DE LA IMAGEN</h3>
+                        <div class="metadata-grid">
+                            <div class="metadata-item">
+                                <span class="meta-label">Resolución:</span>
+                                <span id="meta-resolution" class="meta-value">---</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="meta-label">Relación Aspecto:</span>
+                                <span id="meta-aspect" class="meta-value">---</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="meta-label">Peso de Archivo:</span>
+                                <span id="meta-size" class="meta-value">---</span>
+                            </div>
+                            <div class="metadata-item">
+                                <span class="meta-label">Color de Enfoque:</span>
+                                <div class="color-preview-container">
+                                    <div id="color-chip" class="color-chip"></div>
+                                    <span id="meta-color" class="meta-value">---</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- NUEVO PANEL: COMPARATIVA DE SIMILITUD CON EL MODELO -->
+                    <div class="results-panel">
+                        <h3 class="section-title-small">⚡ COMPATIBILIDAD CON EL MODELO</h3>
+                        
+                        <div class="similarity-item">
+                            <div class="similarity-header">
+                                <span>Alineación de Escala (Aspect Match)</span>
+                                <span id="val-aspect-match">0%</span>
+                            </div>
+                            <div class="bar-container">
+                                <div id="fill-aspect-match" class="bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="similarity-item">
+                            <div class="similarity-header">
+                                <span>Foco / Nitidez (Sharpness)</span>
+                                <span id="val-focus-match">0%</span>
+                            </div>
+                            <div class="bar-container">
+                                <div id="fill-focus-match" class="bar-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="similarity-item">
+                            <div class="similarity-header">
+                                <span>Similitud Estructural (Pattern Similarity)</span>
+                                <span id="val-pattern-similarity" style="font-weight: bold; color: #00d4ff;">0%</span>
+                            </div>
+                            <div class="bar-container total-bar">
+                                <div id="fill-pattern-similarity" class="bar-fill total-fill" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- FIN DASHBOARD-GRID -->
+
+        </div>
+    </div>
+
+    <!-- Carga de la lógica de conexión de la cámara e inferencia -->
+    <script src="Js/Coneciones.JS"></script>
+</body>
+</html>

@@ -1,0 +1,505 @@
+/* --- ESTILOS GENERALES Y RESETEO --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #08111f;
+    color: #e6edf3;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* --- EFECTOS VISUALES DE FONDO (GLOW FUTURISTA) --- */
+.background-glow {
+    position: fixed;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(
+        circle,
+        rgba(0, 180, 216, 0.15) 0%,
+        rgba(0, 180, 216, 0.05) 30%,
+        transparent 70%
+    );
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* --- CONTENEDOR PRINCIPAL (GLASSMORPHISM DE ANCHO AMPLIADO) --- */
+.app-container {
+    width: 100%;
+    max-width: 950px; /* Ampliado para soportar el flujo de dos columnas (Dashboard) */
+    background: rgba(18, 27, 42, 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, 0.45),
+        0 0 25px rgba(0, 180, 216, 0.08);
+}
+
+/* --- CABECERA DE LA APLICACIÓN --- */
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.logo-circle {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: linear-gradient(
+        135deg,
+        #00b4d8,
+        #0077b6
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+    box-shadow: 0 0 20px rgba(0, 180, 216, 0.45);
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.subtitle {
+    color: #9db2c7;
+    margin-top: 3px;
+    font-size: 0.85rem;
+}
+
+/* --- CONTENEDOR GRID DE DOS COLUMNAS (DASHBOARD) --- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr; /* Columna izquierda de visor y columna derecha de métricas */
+    gap: 24px;
+}
+
+.dashboard-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- TARJETA DE BIENVENIDA Y CONFIGURACIÓN --- */
+.card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 18px;
+    padding: 25px;
+    text-align: center;
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #ffffff;
+}
+
+.section-title-small {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    color: #00b4d8;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 8px;
+}
+
+.description {
+    color: #b8c5d1;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+/* --- BOTONES DE ACCIÓN --- */
+.primary-btn,
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.primary-btn,
+#btn-load-model {
+    background: linear-gradient(
+        135deg,
+        #00b4d8,
+        #0077b6
+    );
+    color: white;
+    width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 180, 216, 0.2);
+}
+
+.primary-btn:hover,
+#btn-load-model:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 180, 216, 0.35);
+}
+
+#btn-upload-img {
+    background: #1f3a56;
+    color: white;
+    flex: 1;
+}
+
+#btn-upload-img:hover {
+    background: #2a4d73;
+    transform: translateY(-2px);
+}
+
+#btn-restart-cam {
+    background: #157347;
+    color: white;
+    flex: 1;
+}
+
+#btn-restart-cam:hover {
+    background: #1e925c;
+    transform: translateY(-2px);
+}
+
+/* --- INDICADOR DE ESTADO DEL MOTOR --- */
+.status-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ffc107;
+    box-shadow: 0 0 10px #ffc107;
+    animation: pulse 1.5s infinite;
+}
+
+#status-text {
+    color: #a8b7c5;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* --- TARJETA Y VISOR DEL FEED MULTIMEDIA --- */
+.camera-card {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    position: relative;
+}
+
+.camera-header {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 12px 18px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #a8b7c5;
+    letter-spacing: 1px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.camera-container {
+    position: relative;
+    width: 100%;
+    background: #090e17;
+    overflow: hidden;
+    aspect-ratio: 4/3; /* Evita cualquier tipo de deformación de aspecto */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#webcam,
+#preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.1s ease-out;
+}
+
+/* --- RECUADRO DE ENFOQUE CENTRALIZADO (AMPLIADO AL 70%) --- */
+#focus-box {
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    width: 70%;
+    height: 70%;
+    border: 3px solid #ff4444;
+    box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+    border-radius: 12px;
+    pointer-events: none;
+    transition: all 0.25s ease;
+    z-index: 10;
+}
+
+/* --- PANEL DE MÉTRICAS Y RESULTADOS --- */
+.results-panel {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 18px;
+    padding: 18px;
+}
+
+.result-main {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    align-items: center;
+}
+
+.percent-block {
+    flex: 1;
+}
+
+.percent-label {
+    color: #9eb1c2;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.percent-value {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #00d4ff;
+    transition: color 0.2s ease;
+}
+
+.confidence-block {
+    text-align: right;
+}
+
+.small-title {
+    color: #9eb1c2;
+    margin-bottom: 4px;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.raw-value {
+    font-family: Consolas, monospace;
+    font-size: 1.05rem;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* --- CAJA DE CONSEJOS E HINTS INTELIGENTES --- */
+.hint {
+    margin-top: 15px;
+    background: rgba(0, 180, 216, 0.06);
+    border-left: 4px solid #00b4d8;
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: #dce7f1;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    transition: all 0.2s ease;
+}
+
+/* --- SECCIÓN DE METADATOS FÍSICOS (GRID) --- */
+.metadata-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.metadata-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meta-label {
+    font-size: 0.75rem;
+    color: #9eb1c2;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.meta-value {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.color-preview-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-chip {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: transparent;
+    transition: background-color 0.2s ease;
+}
+
+/* --- SECCIÓN DE COMPATIBILIDAD Y SIMILITUD --- */
+.similarity-item {
+    margin-bottom: 12px;
+}
+
+.similarity-item:last-child {
+    margin-bottom: 0;
+}
+
+.similarity-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #dce7f1;
+    margin-bottom: 6px;
+}
+
+.bar-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: #00b4d8;
+    width: 0%;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.total-bar {
+    height: 10px;
+    background: rgba(0, 212, 255, 0.1);
+}
+
+.total-fill {
+    background: linear-gradient(90deg, #00b4d8, #00f5d4);
+}
+
+/* --- PANEL DE CONTROLES (SLIDERS Y AJUSTES) --- */
+.controls-panel {
+    background: rgba(255, 255, 255, 0.015);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.slider-container {
+    margin-bottom: 20px;
+}
+
+.slider-container label {
+    display: block;
+    margin-bottom: 10px;
+    color: #dce7f1;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+#zoom-slider {
+    width: 100%;
+    accent-color: #00b4d8;
+    background: rgba(255, 255, 255, 0.1);
+    height: 6px;
+    border-radius: 5px;
+    outline: none;
+}
+
+.button-row {
+    display: flex;
+    gap: 12px;
+}
+
+/* --- ANIMACIONES --- */
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 8px rgba(255, 193, 7, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 193, 7, 0);
+    }
+}
+
+/* --- DISEÑO RESPONSIVO PARA DISPOSITIVOS MÓVILES --- */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* Apilado vertical en pantallas medianas y pequeñas */
+        gap: 20px;
+    }
+    .app-container {
+        padding: 20px;
+    }
+    .app-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    .result-main {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    .confidence-block {
+        text-align: center;
+    }
+    .button-row {
+        flex-direction: column;
+    }
+    .percent-value {
+        font-size: 1.8rem;
+    }
+}
